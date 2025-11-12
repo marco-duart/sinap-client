@@ -31,7 +31,7 @@ export const Dashboard = () => {
   return (
     <S.Container>
       <S.Header>
-        <S.Title>Dashboard Sinap 📊</S.Title>
+        <S.Title>Acompanhamento de Projetos 📊</S.Title>
       </S.Header>
 
       <S.Subtitle>Projetos Ativos ({activeProjects.length})</S.Subtitle>

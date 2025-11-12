@@ -24,7 +24,7 @@ const columns: ColumnDef<ProjectBacklog>[] = [
   },
   {
     accessorKey: "requestingDepartment",
-    header: "Departamento",
+    header: "Solicitante",
   },
   {
     accessorKey: "priority.name",
