@@ -1,142 +1,122 @@
-import styled, { keyframes } from 'styled-components';
+import { styled, keyframes } from "../../assets/styles/stitches.config";
 
-const orbit = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
+const orbit = keyframes({
+  "0%": { transform: "rotate(0deg)" },
+  "100%": { transform: "rotate(360deg)" },
+});
 
-const pulse = keyframes`
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-`;
+const pulse = keyframes({
+  "0%": { transform: "scale(1)", opacity: 1 },
+  "50%": { transform: "scale(1.1)", opacity: 0.7 },
+  "100%": { transform: "scale(1)", opacity: 1 },
+});
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing.xlarge};
-  gap: ${({ theme }) => theme.spacing.medium};
-`;
+export const Container = styled("div", {
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "$xlarge",
+  gap: "$medium",
+});
 
-export const SpinnerWrapper = styled.div<{ $size: 'small' | 'medium' | 'large' }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '160px';
-      case 'medium': return '240px';
-      case 'large': return '320px';
-      default: return '120px';
-    }
-  }};
-  height: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '160px';
-      case 'medium': return '240px';
-      case 'large': return '320px';
-      default: return '120px';
-    }
-  }};
-`;
+export const SpinnerWrapper = styled("div", {
+  position: "relative",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 
-export const OrbitalRing = styled.div<{ $size: 'small' | 'medium' | 'large' }>`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '3px solid';
-      case 'medium': return '4px solid';
-      case 'large': return '5px solid';
-      default: return '4px solid';
-    }
-  }};
-  border-color: ${({ theme }) => theme.colors.primary} transparent transparent transparent;
-  border-radius: 50%;
-  animation: ${orbit} 1.5s linear infinite;
-`;
+  variants: {
+    size: {
+      small: { width: "160px", height: "160px" },
+      medium: { width: "240px", height: "240px" },
+      large: { width: "320px", height: "320px" },
+    },
+  },
 
-export const PulseRing = styled.div<{ $size: 'small' | 'medium' | 'large' }>`
-  position: absolute;
-  width: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '70%';
-      case 'medium': return '75%';
-      case 'large': return '80%';
-      default: return '75%';
-    }
-  }};
-  height: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '70%';
-      case 'medium': return '75%';
-      case 'large': return '80%';
-      default: return '75%';
-    }
-  }};
-  border: 2px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 50%;
-  animation: ${pulse} 2s ease-in-out infinite;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid ${({ theme }) => theme.colors.primaryDark};
-    border-radius: 50%;
-    animation: ${pulse} 2s ease-in-out infinite reverse;
-  }
-`;
+  defaultVariants: {
+    size: "medium",
+  },
+});
 
-export const CentralImage = styled.img<{ $size: 'small' | 'medium' | 'large' }>`
-  width: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '80px';
-      case 'medium': return '160px';
-      case 'large': return '300px';
-      default: return '60px';
-    }
-  }};
-  height: ${({ $size }) => {
-    switch ($size) {
-      case 'small': return '80px';
-      case 'medium': return '160px';
-      case 'large': return '300px';
-      default: return '60px';
-    }
-  }};
-  object-fit: contain;
-  z-index: 2;
-  position: relative;
-`;
+export const OrbitalRing = styled("div", {
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  borderRadius: "50%",
+  borderStyle: "solid",
+  borderColor: "$primary transparent transparent transparent",
+  animation: `${orbit} 1.5s linear infinite`,
 
-export const LoadingMessage = styled.p`
-  font-family: ${({ theme }) => theme.fonts.primary};
-  font-size: ${({ theme }) => theme.fontSizes.regular};
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: ${({ theme }) => theme.fonts.weights.regular};
-  text-align: center;
-  margin: 0;
-  max-width: 200px;
-  line-height: 1.4;
-`;
+  variants: {
+    size: {
+      small: { borderWidth: "3px" },
+      medium: { borderWidth: "4px" },
+      large: { borderWidth: "5px" },
+    },
+  },
+
+  defaultVariants: {
+    size: "medium",
+  },
+});
+
+export const PulseRing = styled("div", {
+  position: "absolute",
+  borderRadius: "50%",
+  border: "2px solid $primary",
+  animation: `${pulse} 2s ease-in-out infinite`,
+
+  "&::after": {
+    content: "",
+    position: "absolute",
+    top: "-2px",
+    left: "-2px",
+    right: "-2px",
+    bottom: "-2px",
+    border: "2px solid $primaryDark",
+    borderRadius: "50%",
+    animation: `${pulse} 2s ease-in-out infinite reverse`,
+  },
+
+  variants: {
+    size: {
+      small: { width: "70%", height: "70%" },
+      medium: { width: "75%", height: "75%" },
+      large: { width: "80%", height: "80%" },
+    },
+  },
+
+  defaultVariants: {
+    size: "medium",
+  },
+});
+
+export const CentralImage = styled("img", {
+  position: "relative",
+  zIndex: 2,
+  objectFit: "contain",
+
+  variants: {
+    size: {
+      small: { width: "80px", height: "80px" },
+      medium: { width: "160px", height: "160px" },
+      large: { width: "300px", height: "300px" },
+    },
+  },
+
+  defaultVariants: {
+    size: "medium",
+  },
+});
+
+export const LoadingMessage = styled("p", {
+  fontFamily: "$primary",
+  fontSize: "$regular",
+  color: "$primary",
+  fontWeight: "$regular",
+  textAlign: "center",
+  margin: 0,
+  maxWidth: "200px",
+  lineHeight: 1.4,
+});

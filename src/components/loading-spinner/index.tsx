@@ -12,10 +12,10 @@ export const LoadingSpinner = ({
 }: Props) => {
   return (
     <S.Container>
-      <S.SpinnerWrapper $size={size}>
-        <S.OrbitalRing $size={size} />
-        <S.PulseRing $size={size} />
-        <S.CentralImage src={logo} alt="Logo" $size={size} />
+      <S.SpinnerWrapper size={size}>
+        <S.OrbitalRing size={size} />
+        <S.PulseRing size={size} />
+        <S.CentralImage src={logo} alt="Logo" size={size} />
       </S.SpinnerWrapper>
       {message && <S.LoadingMessage>{message}</S.LoadingMessage>}
     </S.Container>
