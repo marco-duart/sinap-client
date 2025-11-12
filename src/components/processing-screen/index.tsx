@@ -1,11 +1,11 @@
-import * as S from './styles';
+import * as S from "./styles";
 
 interface Props {
   message?: string;
 }
 
-export const ProcessingScreen = ({ 
-  message = "Processando pagamento..." 
+export const ProcessingScreen = ({
+  message = "Carregando projetos...",
 }: Props) => {
   return (
     <S.Overlay>
