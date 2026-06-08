@@ -2,12 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Layout } from "../../components/layout";
+import { useState, useEffect, Fragment } from "react";
 import { projectService } from "../../services/projects.service";
 import { stepService } from "../../services/steps.service";
-import { priorityService } from "../../services/priorities.service";
-import type { Step, Priority } from "../../types/entities";
+import type { Step } from "../../types/entities";
 import toast from "react-hot-toast";
 import * as S from "./form-styles";
 import { ProcessingScreen } from "../../components/processing-screen";
@@ -17,12 +15,11 @@ const projectSchema = z.object({
   description: z.string().optional(),
   requestingDepartment: z.string().min(2, "Departamento obrigatório"),
   stepId: z.number(),
-  priorityId: z.number(),
   urgencyScore: z.number().min(1).max(10),
   importanceScore: z.number().min(1).max(10),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  budget: z.number().optional(),
+  budget: z.number().optional().or(z.nan().transform(() => undefined)),
   businessValue: z.string().optional(),
 });
 
@@ -32,7 +29,6 @@ export const ProjectForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [steps, setSteps] = useState<Step[]>([]);
-  const [priorities, setPriorities] = useState<Priority[]>([]);
   const [loading, setLoading] = useState(!!id);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,12 +54,8 @@ export const ProjectForm = () => {
 
   const loadOptions = async () => {
     try {
-      const [stepsData, prioritiesData] = await Promise.all([
-        stepService.getAll(),
-        priorityService.getAll(),
-      ]);
+      const stepsData = await stepService.getAll();
       setSteps(stepsData);
-      setPriorities(prioritiesData);
     } catch (error) {
       toast.error("Erro ao carregar opções");
     }
@@ -78,11 +70,12 @@ export const ProjectForm = () => {
         description: project.description,
         requestingDepartment: project.requestingDepartment,
         stepId: project.stepId,
-        priorityId: project.priorityId,
         urgencyScore: project.urgencyScore,
         importanceScore: project.importanceScore,
-        budget: project.budget,
         businessValue: project.businessValue,
+        budget: project.budget ? Number(project.budget) : undefined,
+        startDate: project.startDate ? String(project.startDate).split('T')[0] : undefined,
+        endDate: project.endDate ? String(project.endDate).split('T')[0] : undefined,
       });
     } catch (error) {
       toast.error("Erro ao carregar projeto");
@@ -114,10 +107,10 @@ export const ProjectForm = () => {
   }
 
   return (
-    <Layout
-      title={id ? "Editar Projeto" : "Criar Novo Projeto"}
-      subtitle={id ? "Atualize os dados do projeto" : "Preencha os dados do novo projeto"}
-    >
+    <Fragment>
+      <h1>{id ? "Editar Projeto" : "Criar Novo Projeto"}</h1>
+      <p>{id ? "Atualize os dados do projeto" : "Preencha os dados do novo projeto"}</p>
+
       <S.Container>
         <S.FormCard>
           <S.Form onSubmit={handleSubmit(onSubmit)}>
@@ -154,21 +147,6 @@ export const ProjectForm = () => {
                   {steps.map((step) => (
                     <option key={step.id} value={step.id}>
                       {step.name}
-                    </option>
-                  ))}
-                </S.Select>
-              </S.FormGroup>
-
-              <S.FormGroup>
-                <S.Label htmlFor="priorityId">Prioridade *</S.Label>
-                <S.Select
-                  id="priorityId"
-                  {...register("priorityId", { valueAsNumber: true })}
-                >
-                  <option value="">Selecione uma prioridade</option>
-                  {priorities.map((priority) => (
-                    <option key={priority.id} value={priority.id}>
-                      {priority.name}
                     </option>
                   ))}
                 </S.Select>
@@ -214,7 +192,12 @@ export const ProjectForm = () => {
             <S.FormRow>
               <S.FormGroup>
                 <S.Label htmlFor="budget">Orçamento</S.Label>
-                <S.Input id="budget" type="number" step="0.01" {...register("budget")} />
+                <S.Input
+                  id="budget"
+                  type="number"
+                  step="0.01"
+                  {...register("budget", { valueAsNumber: true })}
+                />
               </S.FormGroup>
 
               <S.FormGroup>
@@ -238,6 +221,6 @@ export const ProjectForm = () => {
           </S.Form>
         </S.FormCard>
       </S.Container>
-    </Layout>
+    </Fragment>
   );
 };

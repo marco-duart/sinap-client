@@ -1,7 +1,7 @@
 import api from "../configs/api";
 import type { Project } from "../types/entities";
 
-const token = () => localStorage.getItem("token");
+const token = () => localStorage.getItem("token") || localStorage.getItem("@Sinap:token");
 
 export const projectService = {
   async getActiveProjects(): Promise<Project[]> {
@@ -10,8 +10,9 @@ export const projectService = {
   },
 
   async getBacklogQueue(limit?: number): Promise<Project[]> {
+    const params = limit ? { limit } : undefined;
     const { data } = await api.get<Project[]>("/projects/dashboard/queue", {
-      params: { limit },
+      params,
     });
     return data;
   },
@@ -24,6 +25,7 @@ export const projectService = {
   },
 
   async getById(id: number): Promise<Project> {
+    if (!id || isNaN(id)) throw new Error("ID de projeto inválido");
     const { data } = await api.get<Project>(`/projects/${id}`, {
       headers: { Authorization: `Bearer ${token()}` },
     });
@@ -38,6 +40,7 @@ export const projectService = {
   },
 
   async update(id: number, project: Partial<Project>): Promise<Project> {
+    if (!id || isNaN(id)) throw new Error("ID de projeto inválido");
     const { data } = await api.patch<Project>(`/projects/${id}`, project, {
       headers: { Authorization: `Bearer ${token()}` },
     });
@@ -45,12 +48,14 @@ export const projectService = {
   },
 
   async delete(id: number): Promise<void> {
+    if (!id || isNaN(id)) throw new Error("ID de projeto inválido");
     await api.delete(`/projects/${id}`, {
       headers: { Authorization: `Bearer ${token()}` },
     });
   },
 
   async getGanttData(projectId: number): Promise<any[]> {
+    if (!projectId || isNaN(projectId)) throw new Error("ID de projeto inválido");
     const { data } = await api.get(`/projects/${projectId}/gantt`, {
       headers: { Authorization: `Bearer ${token()}` },
     });
