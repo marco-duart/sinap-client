@@ -1,18 +1,29 @@
-import { useEffect } from "react";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
+import { ProcessingScreen } from "../processing-screen";
 
-export const PrivateRoute = () => {
-  const navigate = useNavigate();
-  const { token } = useParams<{ token?: string }>();
+interface PrivateRouteProps {
+  element: React.ReactNode;
+  allowedRoles?: string[];
+}
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/unauthorized", { replace: true });
-      toast.error("Ocorreu um erro com seu link, tente novamente mais tarde.");
-      return;
-    }
-  }, [token, navigate, useParams]);
+export const PrivateRoute: React.FC<PrivateRouteProps> = ({
+  element,
+  allowedRoles,
+}) => {
+  const { isAuthenticated, user, isLoading } = useAuth();
 
-  return <Outlet />;
+  if (isLoading) {
+    return <ProcessingScreen message="Verificando autenticação..." />;
+  }
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return element;
 };

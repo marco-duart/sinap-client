@@ -3,6 +3,7 @@ import { useGetDashboard } from "../../hooks/use-get-dashboard";
 import { ProcessingScreen } from "../../components/processing-screen";
 import { ProjectCard } from "../../components/project-card";
 import { ProjectsTable } from "../../components/projects-table";
+import { Layout } from "../../components/layout";
 import { useEffect, useCallback } from "react";
 
 export const Dashboard = () => {
@@ -29,26 +30,24 @@ export const Dashboard = () => {
   }
 
   return (
-    <S.Container>
-      <S.Header>
-        <S.Title>Acompanhamento de Projetos 📊</S.Title>
-      </S.Header>
+    <Layout title="Acompanhamento de Projetos 📊">
+      <S.Container>
+        <S.Subtitle>Projetos Ativos ({activeProjects.length})</S.Subtitle>
+        <S.ActiveProjectsGrid>
+          {activeProjects.length > 0 ? (
+            activeProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))
+          ) : (
+            <p>Nenhum projeto está em desenvolvimento ativo no momento.</p>
+          )}
+        </S.ActiveProjectsGrid>
 
-      <S.Subtitle>Projetos Ativos ({activeProjects.length})</S.Subtitle>
-      <S.ActiveProjectsGrid>
-        {activeProjects.length > 0 ? (
-          activeProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))
-        ) : (
-          <p>Nenhum projeto está em desenvolvimento ativo no momento.</p>
-        )}
-      </S.ActiveProjectsGrid>
-
-      <S.QueueSection>
-        <S.Subtitle>Próximos Projetos (Backlog Priorizado)</S.Subtitle>
-        <ProjectsTable data={backlogProjects} />
-      </S.QueueSection>
-    </S.Container>
+        <S.QueueSection>
+          <S.Subtitle>Próximos Projetos (Backlog Priorizado)</S.Subtitle>
+          <ProjectsTable data={backlogProjects} />
+        </S.QueueSection>
+      </S.Container>
+    </Layout>
   );
 };
